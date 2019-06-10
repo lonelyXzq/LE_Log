@@ -1,0 +1,9 @@
+D:\Github\LE_Projects\LE_Log\LE_Log\bin\Debug\netstandard2.0\LE_Log.deps.json
+D:\Github\LE_Projects\LE_Log\LE_Log\bin\Debug\netstandard2.0\LE_Log.dll
+D:\Github\LE_Projects\LE_Log\LE_Log\bin\Debug\netstandard2.0\LE_Log.pdb
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.csproj.CoreCompileInputs.cache
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.AssemblyInfoInputs.cache
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.AssemblyInfo.cs
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.dll
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.pdb
+D:\Github\LE_Projects\LE_Log\LE_Log\obj\Debug\netstandard2.0\LE_Log.csprojAssemblyReference.cache
