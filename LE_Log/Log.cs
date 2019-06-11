@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace LE_Log
 {
@@ -37,7 +38,7 @@ namespace LE_Log
                     return;
                 }
                 isLogSave = value;
-                if (value==true)
+                if (value == true)
                 {
                     logSaver.Start();
                     AddLogHandler(logSaver.Add);
@@ -94,7 +95,7 @@ namespace LE_Log
         static Log()
         {
             logSaver = new LogSaver("/Log/");
-            StackTraceMark = LogType.Error | LogType.Exception |LogType.FatalError;
+            StackTraceMark = LogType.Error | LogType.Exception | LogType.FatalError;
             IsLogConsole = true;
             IsLogSave = false;
         }
@@ -128,7 +129,9 @@ namespace LE_Log
 
         private static void LogConsole(LogType logType, string message, string stack)
         {
-            Console.WriteLine(string.Format("[{0}]:{1}\n{2}", logType, message, stack).TrimEnd());
+            Console.WriteLine(string.Format("[{0}]{1}{2}\n{3}", 
+                logType,Thread.CurrentThread.Name==null?string.Empty:string.Format("({0})",Thread.CurrentThread.Name)
+                , message, stack).TrimEnd());
         }
 
         private static string GetTime()
@@ -142,7 +145,7 @@ namespace LE_Log
 
         private static string GetText(string tag, string message)
         {
-            return string.Format("{0}{1} :: {2}", GetTime(), tag, message);
+            return string.Format("{0}{1}{2}{3}", GetTime(), tag, tag == string.Empty ? string.Empty : " :: ", message);
         }
 
         private static string FormatStack(StackTrace st)
@@ -154,7 +157,9 @@ namespace LE_Log
                 string _t = sf.GetFileName();
                 if (_t != null)
                 {
-                    s += string.Format("{0}{1}:{2}(at{3}:{4})\n", StackPrefix, sf.GetMethod().ReflectedType.Name, sf.GetMethod(), _t, st.GetFrame(i).GetFileLineNumber());
+                    s += string.Format("{0}{1}:{2}(at{3}:{4})\n", StackPrefix,
+                        sf.GetMethod().ReflectedType.Name,
+                        sf.GetMethod(), _t, st.GetFrame(i).GetFileLineNumber());
                 }
             }
             return s;
@@ -168,19 +173,7 @@ namespace LE_Log
         [Conditional("DEBUG")]
         public static void Debug(string message)
         {
-            Debug(string.Empty, message);
-        }
-
-        [Conditional("DEBUG")]
-        public static void Debug(string message, params object[] args)
-        {
-            Debug(string.Empty, message, args);
-        }
-
-        [Conditional("DEBUG")]
-        public static void Debug(string tag, string message, params object[] args)
-        {
-            Debug(tag, string.Format(message, args));
+            Operator(LogType.Debug, GetText(string.Empty, message));
         }
 
         [Conditional("DEBUG")]
@@ -189,20 +182,23 @@ namespace LE_Log
             Operator(LogType.Debug, GetText(tag, message));
         }
 
+        [Conditional("DEBUG")]
+        public static void Debug(string message, params object[] args)
+        {
+            Operator(LogType.Debug, GetText(string.Empty, string.Format(message, args)));
+        }
+
+        [Conditional("DEBUG")]
+        public static void Debug(string tag, string message, params object[] args)
+        {
+            Operator(LogType.Debug, GetText(tag, string.Format(message, args)));
+        }
+
+
 
         public static void Info(string message)
         {
-            Info(string.Empty, message);
-        }
-
-        public static void Info(string message, params object[] args)
-        {
-            Info(string.Empty, string.Format(message, args));
-        }
-
-        public static void Info(string tag, string message, params object[] args)
-        {
-            Info(tag, string.Format(message, args));
+            Operator(LogType.Info, GetText(string.Empty, message));
         }
 
         public static void Info(string tag, string message)
@@ -210,19 +206,19 @@ namespace LE_Log
             Operator(LogType.Info, GetText(tag, message));
         }
 
+        public static void Info(string message, params object[] args)
+        {
+            Operator(LogType.Info, GetText(string.Empty, string.Format(message, args)));
+        }
+
+        public static void Info(string tag, string message, params object[] args)
+        {
+            Operator(LogType.Info, GetText(tag, string.Format(message, args)));
+        }
+
         public static void Warning(string message)
         {
-            Warning(string.Empty, message);
-        }
-
-        public static void Warning(string message, params object[] args)
-        {
-            Warning(string.Empty, string.Format(message, args));
-        }
-
-        public static void Warning(string tag, string message, params object[] args)
-        {
-            Warning(tag, string.Format(message, args));
+            Operator(LogType.Warning, GetText(string.Empty, message));
         }
 
         public static void Warning(string tag, string message)
@@ -230,19 +226,19 @@ namespace LE_Log
             Operator(LogType.Warning, GetText(tag, message));
         }
 
+        public static void Warning(string message, params object[] args)
+        {
+            Operator(LogType.Warning, GetText(string.Empty, string.Format(message, args)));
+        }
+
+        public static void Warning(string tag, string message, params object[] args)
+        {
+            Operator(LogType.Warning, GetText(tag, string.Format(message, args)));
+        }
+
         public static void Error(string message)
         {
-            Error(string.Empty, message);
-        }
-
-        public static void Error(string message, params object[] args)
-        {
-            Error(string.Empty, string.Format(message, args));
-        }
-
-        public static void Error(string tag, string message, params object[] args)
-        {
-            Error(tag, string.Format(message, args));
+            Operator(LogType.Error, GetText(string.Empty, message));
         }
 
         public static void Error(string tag, string message)
@@ -250,19 +246,20 @@ namespace LE_Log
             Operator(LogType.Error, GetText(tag, message));
         }
 
+        public static void Error(string message, params object[] args)
+        {
+            Operator(LogType.Error, GetText(string.Empty, string.Format(message, args)));
+        }
+
+        public static void Error(string tag, string message, params object[] args)
+        {
+            Operator(LogType.Error, GetText(tag, string.Format(message, args)));
+        }
+
         public static void Exception(Exception exception, string message)
         {
-            Exception(exception,string.Empty, message);
-        }
-
-        public static void Exception(Exception exception, string message, params object[] args)
-        {
-            Exception(exception, string.Empty, string.Format(message, args));
-        }
-
-        public static void Exception(Exception exception, string tag, string message, params object[] args)
-        {
-            Exception(exception, tag, string.Format(message, args));
+            Operator(LogType.Exception, GetText(string.Empty, message));
+            throw exception;
         }
 
         public static void Exception(Exception exception, string tag, string message)
@@ -271,24 +268,36 @@ namespace LE_Log
             throw exception;
         }
 
+        public static void Exception(Exception exception, string message, params object[] args)
+        {
+            Operator(LogType.Exception, GetText(string.Empty, string.Format(message, args)));
+            throw exception;
+        }
+
+        public static void Exception(Exception exception, string tag, string message, params object[] args)
+        {
+            Operator(LogType.Exception, GetText(tag, string.Format(message, args)));
+            throw exception;
+        }
+
         public static void FatalError(string message)
         {
-            FatalError(string.Empty, message);
-        }
-
-        public static void FatalError(string message, params object[] args)
-        {
-            FatalError(string.Empty, string.Format(message, args));
-        }
-
-        public static void FatalError(string tag, string message, params object[] args)
-        {
-            FatalError(tag, string.Format(message, args));
+            Operator(LogType.FatalError, GetText(string.Empty, message));
         }
 
         public static void FatalError(string tag, string message)
         {
             Operator(LogType.FatalError, GetText(tag, message));
+        }
+
+        public static void FatalError(string message, params object[] args)
+        {
+            Operator(LogType.FatalError, GetText(string.Empty, string.Format(message, args)));
+        }
+
+        public static void FatalError(string tag, string message, params object[] args)
+        {
+            Operator(LogType.FatalError, GetText(tag, string.Format(message, args)));
         }
     }
 }
