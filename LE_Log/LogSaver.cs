@@ -104,7 +104,9 @@ namespace LE_Log
         {
             lock (logQueue)
             {
-                logQueue.Enqueue(string.Format("[{0}]{1}:{2}\n{3}", logType, Thread.CurrentThread.Name, message, stack).TrimEnd());
+                logQueue.Enqueue(string.Format("[{0}]{1}:{2}\n{3}", logType,
+                    Thread.CurrentThread.Name == null ? string.Empty : string.Format("({0})", Thread.CurrentThread.Name)
+                    , message, stack).TrimEnd());
             }
         }
 
