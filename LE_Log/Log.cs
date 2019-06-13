@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -21,6 +22,8 @@ namespace LE_Log
 
         private static bool isLogConsole;
 
+
+        private static Dictionary<LogType, LogAction> actions;
 
         /// <summary>
         /// 是否保存记录.default:false
@@ -94,10 +97,31 @@ namespace LE_Log
 
         static Log()
         {
+            actions = new Dictionary<LogType, LogAction>();
             logSaver = new LogSaver("/Log/");
             StackTraceMark = LogType.Error | LogType.Exception | LogType.FatalError;
             IsLogConsole = true;
             IsLogSave = false;
+        }
+
+        public static void AddAction(LogType logType, LogAction logAction)
+        {
+            if (actions.ContainsKey(logType))
+            {
+                actions[logType] += logAction;
+            }
+            else
+            {
+                actions.Add(logType, logAction);
+            }
+        }
+
+        public static void DeleteAction(LogType logType, LogAction logAction)
+        {
+            if (actions.ContainsKey(logType))
+            {
+                actions[logType] -= logAction;
+            }
         }
 
         public static void AddLogHandler(LogHandler log)
@@ -129,8 +153,8 @@ namespace LE_Log
 
         private static void LogConsole(LogType logType, string message, string stack)
         {
-            Console.WriteLine(string.Format("[{0}]{1}{2}\n{3}", 
-                logType,Thread.CurrentThread.Name==null?string.Empty:string.Format("({0})",Thread.CurrentThread.Name)
+            Console.WriteLine(string.Format("[{0}]{1}{2}\n{3}",
+                logType, Thread.CurrentThread.Name == null ? string.Empty : string.Format("({0})", Thread.CurrentThread.Name)
                 , message, stack).TrimEnd());
         }
 
@@ -167,7 +191,13 @@ namespace LE_Log
 
         private static void Operator(LogType logType, string messsge)
         {
-            logHandler?.Invoke(logType, messsge, (StackTraceMark & logType) == logType ? FormatStack(new StackTrace(true)) : string.Empty);
+            string stack = (StackTraceMark & logType) == logType ? FormatStack(new StackTrace(true)) : string.Empty;
+            logHandler?.Invoke(logType, messsge, stack);
+            if (actions.ContainsKey(logType))
+            {
+                messsge = messsge.Substring(messsge.IndexOf(Prefix)+Prefix.Length);
+                actions[logType]?.Invoke(messsge, stack);
+            }
         }
 
         [Conditional("DEBUG")]

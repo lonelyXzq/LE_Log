@@ -11,4 +11,12 @@ namespace LE_Log
     /// <param name="message"></param>
     /// <param name="stack"></param>
     public delegate void LogHandler(LogType logType, string message, string stack);
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="messsage"></param>
+    /// <param name="stack"></param>
+    public delegate void LogAction(string messsage,string stack);
 }
