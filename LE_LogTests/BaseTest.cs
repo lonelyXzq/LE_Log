@@ -12,9 +12,9 @@ namespace LE_LogTests
         {
             Log.IsLogTime = true;
             Log.Debug("2333");
-            Log.Debug("FatalDebug", "2333");
+            Log.Debug("Debug", "2333");
             Log.Debug("2333:{0}", 233);
-            Log.Debug("FatalDebug", "2333:{0}", 233);
+            Log.Debug("Debug", "2333:{0}", 233);
             Log.IsLogTime = false;
         }
 
@@ -22,27 +22,27 @@ namespace LE_LogTests
         public void TestDebug()
         {
             Log.Debug("2333");
-            Log.Debug("FatalDebug", "2333");
+            Log.Debug("Debug", "2333");
             Log.Debug("2333:{0}", 233);
-            Log.Debug("FatalDebug", "2333:{0}", 233);
+            Log.Debug("Debug", "2333:{0}", 233);
         }
 
         [TestMethod]
         public void TestInfo()
         {
             Log.Info("2333");
-            Log.Info("FatalInfo", "2333");
+            Log.Info("Info", "2333");
             Log.Info("2333:{0}", 233);
-            Log.Info("FatalInfo", "2333:{0}", 233);
+            Log.Info("Info", "2333:{0}", 233);
         }
 
         [TestMethod]
         public void TestWarning()
         {
             Log.Warning("2333");
-            Log.Warning("FatalWarning", "2333");
+            Log.Warning("Warning", "2333");
             Log.Warning("2333:{0}", 233);
-            Log.Warning("FatalWarning", "2333:{0}", 233);
+            Log.Warning("Warning", "2333:{0}", 233);
         }
 
         [TestMethod]
